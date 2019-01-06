@@ -20,12 +20,19 @@ install (TARGETS openturns_julia DESTINATION ${JULIA_INSTALL_PATH})
 
 enable_testing ()
 
-add_test (NAME trigger_recompile COMMAND ${CMAKE_COMMAND} -E touch_nocreate ${PROJECT_SOURCE_DIR}/openturns.jl)
+add_test (NAME trigger_recompile COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/openturns.jl ${PROJECT_BINARY_DIR}/openturns.jl)
 
 macro (ot_add_test name)
-  add_test (NAME ${name} COMMAND ${Julia_EXECUTABLE} --compile=all ${PROJECT_SOURCE_DIR}/t_${name}.jl)
-  set_tests_properties(${name} PROPERTIES ENVIRONMENT "JULIA_LOAD_PATH=${PROJECT_SOURCE_DIR}:;LD_LIBRARY_PATH=${PROJECT_BINARY_DIR}" DEPENDS trigger_recompile)
+  add_test (NAME ${name} COMMAND ${Julia_EXECUTABLE} ${PROJECT_SOURCE_DIR}/t_${name}.jl)
+  set_tests_properties(${name} PROPERTIES ENVIRONMENT "JULIA_LOAD_PATH=${PROJECT_BINARY_DIR}:;LD_LIBRARY_PATH=${PROJECT_BINARY_DIR}")
+
+  if ("${name}" STREQUAL "import")
+    set_tests_properties(${name} PROPERTIES DEPENDS trigger_recompile)
+  else ()
+    set_tests_properties(${name} PROPERTIES DEPENDS import)
+  endif ()
 endmacro ()
 
+ot_add_test (import)
 ot_add_test (base)
 ot_add_test (distribution)

@@ -4,13 +4,8 @@ sudo: required
 services:
   - docker
 
-env:
-  global:
-    - DOCKER_IMAGE=openturns/archlinux-python
-
 install:
-  - docker pull ${DOCKER_IMAGE}
+  - docker build . -t archlinux-julia
 
 script:
-  - docker run -v `pwd`:/io ${DOCKER_IMAGE} /io/run_docker_build.sh
-
+  - docker run -v `pwd`:/io archlinux-julia /io/run_docker_build.sh
