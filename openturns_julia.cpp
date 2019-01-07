@@ -1,26 +1,40 @@
 
 #include "openturns_julia.hpp"
 
-#include <string>
-#include <openturns/Arcsine.hxx>
-#include <openturns/Normal.hxx>
+#include <openturns/OTDistribution.hxx>
+
 using namespace OT;
 
 template <typename T>
-void define_repr(jlcxx::Module& mod)
+void define_object(jlcxx::TypeWrapper<T> object_type)
 {
-  mod.method("repr", [] (const T & p) { return p.__repr__();});
+  object_type
+    .method("repr", [] (const T & p) { return p.__repr__();})
+    .method("getName", &T::getName);
+}
+
+template <typename T>
+void define_collection(jlcxx::TypeWrapper<T> collection_type)
+{
+  define_object(collection_type);
+  collection_type
+    .method("getSize", &T::getSize)
+    .method("clear", &T::clear)
+    .method("resize", &T::resize)
+    .method("isEmpty", &T::isEmpty);
 }
 
 template <typename T>
 void define_distribution(jlcxx::TypeWrapper<T> distribution_type)
 {
+  define_object(distribution_type);
   distribution_type
     .method("getDimension", &T::getDimension)
     .method("getRealization", &T::getRealization)
     .method("getSample", [] (const T& n, const int_t size) { return n.getSample(size); } )
     .method("computePDF", [] (const T& n, const Point & x) { return n.computePDF(x); } )
     .method("computeCDF", [] (const T& n, const Point & x) { return n.computeCDF(x); } )
+    .method("computeQuantile", [] (const T& n, const double p) { return n.computeQuantile(p); } )
     .method("getMean", &T::getMean)
     .method("getSkewness", &T::getSkewness)
     .method("getKurtosis", &T::getKurtosis);
@@ -28,28 +42,27 @@ void define_distribution(jlcxx::TypeWrapper<T> distribution_type)
 
 JLCXX_MODULE define_julia_module(jlcxx::Module& mod)
 {
-  mod.add_type<Point>("Point")
-    .constructor<const int_t, const Scalar>()
+  define_collection(mod.add_type<Point>("Point")
+    .constructor<const int_t, const double>()
     .method("norm", &Point::norm)
-    .method("resize", &Point::resize)
     .method("getDimension", &Point::getDimension)
     .method("getindex", [] (const Point& n, const int_t i) { return n[i]; })
-    .method("setindex!", [] (Point& n, const double x, const int_t i) { n[i] = x; });
-  define_repr<Point>(mod);
+    .method("setindex!", [] (Point& n, const double x, const int_t i) { n[i] = x; }));
 
-  mod.add_type<Sample>("Sample")
+  define_object(mod.add_type<Sample>("Sample")
     .constructor<const int_t, const int_t>()
+    .method("getSize", &Sample::getSize)
     .method("getindex", [] (const Sample& n, const int_t i) { return Point(n[i]); })
     .method("setindex!", [] (Sample& n, const Point & x, const int_t i) { n[i] = x; })
-    .method("getSize", &Sample::getSize)
-    .method("computeMean", &Sample::computeMean);
-  define_repr<Sample>(mod);
+    .method("getDimension", &Sample::getDimension)
+    .method("computeMean", &Sample::computeMean));
 
-  jlcxx::TypeWrapper<Arcsine> arcsine(mod.add_type<Arcsine>("Arcsine").constructor<const Scalar, const Scalar>());
-  define_distribution(arcsine);
-  define_repr<Arcsine>(mod);
-  jlcxx::TypeWrapper<Normal> normal(mod.add_type<Normal>("Normal").constructor<const Scalar, const Scalar>());
-  define_distribution(normal);
-  define_repr<Normal>(mod);
+  define_distribution(mod.add_type<Arcsine>("Arcsine")
+    .constructor<const double, const double>());
+  define_distribution(mod.add_type<Beta>("Beta")
+    .constructor<const double, const double, const double, const double>());
+  define_distribution(mod.add_type<Normal>("Normal")
+    .constructor<const int_t>()
+    .constructor<const double, const double>());
 }
 
