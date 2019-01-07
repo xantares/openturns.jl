@@ -26,17 +26,22 @@ void define_distribution(jlcxx::TypeWrapper<T> distribution_type)
     .method("getKurtosis", &T::getKurtosis);
 }
 
-
 JLCXX_MODULE define_julia_module(jlcxx::Module& mod)
 {
   mod.add_type<Point>("Point")
     .constructor<const int_t, const Scalar>()
     .method("norm", &Point::norm)
-    .method("resize", &Point::resize);
+    .method("resize", &Point::resize)
+    .method("getDimension", &Point::getDimension)
+    .method("getindex", [] (const Point& n, const int_t i) { return n[i]; })
+    .method("setindex!", [] (Point& n, const double x, const int_t i) { n[i] = x; });
   define_repr<Point>(mod);
 
   mod.add_type<Sample>("Sample")
-    .constructor<const int_t, const int_t>().method("getSize", &Sample::getSize)
+    .constructor<const int_t, const int_t>()
+    .method("getindex", [] (const Sample& n, const int_t i) { return Point(n[i]); })
+    .method("setindex!", [] (Sample& n, const Point & x, const int_t i) { n[i] = x; })
+    .method("getSize", &Sample::getSize)
     .method("computeMean", &Sample::computeMean);
   define_repr<Sample>(mod);
 

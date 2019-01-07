@@ -16,14 +16,16 @@ Requirements:
 
 Quickstart::
 
+    git clone https://github.com/openturns/openturns.jl.git
+    cd openturns.jl
     mkdir build && cd build
     cmake ..
     make
-    JULIA_LOAD_PATH=$PWD/..: LD_LIBRARY_PATH=$PWD julia -e 'import openturns; dist = openturns.Normal()'
+    JULIA_LOAD_PATH=$PWD/..: LD_LIBRARY_PATH=$PWD julia -e 'import openturns'
 
 Example::
 
     import openturns
     ot = openturns
     normal = ot.Normal(5.0, 3.0)
-    @show ot.repr(ot.getRealization(normal))
+    @show ot.getRealization(normal)

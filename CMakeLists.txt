@@ -16,7 +16,7 @@ set_target_properties (openturns_julia PROPERTIES PREFIX "")
 set (JULIA_INSTALL_PATH share/julia/stdlib/v1.0 CACHE PATH "Julia install directory")
 
 install (FILES openturns.jl DESTINATION ${JULIA_INSTALL_PATH})
-install (TARGETS openturns_julia DESTINATION ${JULIA_INSTALL_PATH})
+install (TARGETS openturns_julia DESTINATION lib)
 
 enable_testing ()
 
