@@ -2,7 +2,10 @@
 #include "openturns_julia.hpp"
 
 #include <openturns/OTDistribution.hxx>
+#include <openturns/OT.hxx>
 
+#include "JuliaFunction.hxx"
+#include <jlcxx/functions.hpp>
 using namespace OT;
 
 template <typename T>
@@ -40,6 +43,23 @@ void define_distribution(jlcxx::TypeWrapper<T> distribution_type)
     .method("getKurtosis", &T::getKurtosis);
 }
 
+template <typename T>
+void define_function(jlcxx::TypeWrapper<T> function_type)
+{
+  define_object(function_type);
+  function_type
+    .method("getInputDimension", &T::getInputDimension)
+    .method("getOutputDimension", &T::getOutputDimension)
+    .method("getCallsNumber", &T::getCallsNumber)
+    .method("call", [](const T &function, jlcxx::ArrayRef<double> in)
+    {
+      Point inP(in.size());
+      std::copy(in.begin(), in.end(), inP.begin());
+      Point outP(function(inP));
+      return outP;
+    });
+}
+
 JLCXX_MODULE define_julia_module(jlcxx::Module& mod)
 {
   define_collection(mod.add_type<Point>("Point")
@@ -64,5 +84,10 @@ JLCXX_MODULE define_julia_module(jlcxx::Module& mod)
   define_distribution(mod.add_type<Normal>("Normal")
     .constructor<const int_t>()
     .constructor<const double, const double>());
+
+  define_function(mod.add_type<SymbolicFunction>("SymbolicFunction")
+    .constructor<const String &, const String &>());
+  define_function(mod.add_type<OTJULIA::JuliaFunction>("JuliaFunction")
+    .constructor<const int_t, const int_t, jl_function_t*>());
 }
 

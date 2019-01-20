@@ -9,7 +9,7 @@ project (openturns.jl)
 find_package (JlCxx REQUIRED)
 find_package (OpenTURNS REQUIRED)
 
-add_library (openturns_julia MODULE openturns_julia.cpp)
+add_library (openturns_julia MODULE openturns_julia.cpp JuliaEvaluation.cxx JuliaFunction.cxx)
 target_link_libraries (openturns_julia OT ${Julia_LIBRARY} JlCxx::cxxwrap_julia)
 set_target_properties (openturns_julia PROPERTIES PREFIX "")
 
@@ -36,3 +36,4 @@ endmacro ()
 ot_add_test (import)
 ot_add_test (base)
 ot_add_test (distribution)
+ot_add_test (function)
