@@ -5,7 +5,7 @@ services:
   - docker
 
 install:
-  - docker build . -t archlinux-julia
+  - docker build .ci_support -t archlinux-julia
 
 script:
-  - docker run -v `pwd`:/io archlinux-julia /io/run_docker_build.sh
+  - docker run -v `pwd`:/io archlinux-julia /io/.ci_support/run_docker_build.sh
