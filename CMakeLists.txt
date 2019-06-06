@@ -8,6 +8,7 @@ project (openturns.jl)
 
 find_package (JlCxx REQUIRED)
 find_package (OpenTURNS REQUIRED)
+message (STATUS "Found OpenTURNS: ${OPENTURNS_ROOT_DIR} (found version \"${OPENTURNS_VERSION_STRING}\")")
 
 add_library (openturns_julia MODULE src/openturns_julia.cpp src/JuliaEvaluation.cxx src/JuliaFunction.cxx)
 target_link_libraries (openturns_julia OT ${Julia_LIBRARY} JlCxx::cxxwrap_julia)

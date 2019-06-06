@@ -1,11 +1,10 @@
 
 #include "openturns_julia.hpp"
 
-#include <openturns/OTDistribution.hxx>
-#include <openturns/OT.hxx>
-
 #include "JuliaFunction.hxx"
 #include <jlcxx/functions.hpp>
+
+#include <openturns/OT.hxx>
 using namespace OT;
 
 template <typename T>
