@@ -7,7 +7,8 @@ Julia language bindings
 
 Experimental OpenTURNS bindings for the Julia language (https://julialang.org/)
 
-Requirements:
+Requirements
+------------
 
 - cmake
 - OpenTURNS
@@ -26,7 +27,9 @@ Quickstart
     make
     JULIA_LOAD_PATH=$PWD/..: LD_LIBRARY_PATH=$PWD julia -e 'import openturns'
 
-Example::
+Example
+-------
+::
 
     import openturns
     ot = openturns
