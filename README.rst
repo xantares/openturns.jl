@@ -14,7 +14,10 @@ Requirements:
 - libcxxwrap-julia (https://github.com/JuliaInterop/libcxxwrap-julia)
 - CxxWrap.jl (https://github.com/JuliaInterop/CxxWrap.jl)
 
-Quickstart::
+
+Quickstart
+----------
+::
 
     git clone https://github.com/openturns/openturns.jl.git
     cd openturns.jl
